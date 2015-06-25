@@ -59,7 +59,7 @@
 
 			if (isNative) {
 				return function(callback, root) {
-					requestFrame(callback, root)
+					requestFrame(callback, root);
 				};
 			}
 
@@ -189,7 +189,9 @@
 				if (!running[id] || (verifyCallback && !verifyCallback(id))) {
 
 					running[id] = null;
-					completedCallback && completedCallback(desiredFrames - (dropCounter / ((now - start) / millisecondsPerSecond)), id, false);
+					if(completedCallback) {
+						completedCallback(desiredFrames - (dropCounter / ((now - start) / millisecondsPerSecond)), id, false);
+					}
 					return;
 
 				}
@@ -218,7 +220,9 @@
 				var value = easingMethod ? easingMethod(percent) : percent;
 				if ((stepCallback(value, now, render) === false || percent === 1) && render) {
 					running[id] = null;
-					completedCallback && completedCallback(desiredFrames - (dropCounter / ((now - start) / millisecondsPerSecond)), id, percent === 1 || duration == null);
+					if(completedCallback) {
+						completedCallback(desiredFrames - (dropCounter / ((now - start) / millisecondsPerSecond)), id, percent === 1 || duration == null);
+					}
 				} else if (render) {
 					lastFrame = now;
 					core.effect.Animate.requestAnimationFrame(step, root);
@@ -236,4 +240,3 @@
 		}
 	};
 })(this);
-

@@ -66,7 +66,7 @@ var Scroller;
 				provided that another scrolling action has not begun. Used to know
 				when to fade out a scrollbar. */
 			scrollingComplete: NOOP,
-			
+
 			/** This configures the amount of change applied to deceleration when reaching boundaries  **/
             penetrationDeceleration : 0.03,
 
@@ -445,7 +445,7 @@ var Scroller;
 			var self = this;
 
 			if (!self.options.zooming) {
-				throw new Error("Zooming is not enabled!");
+				throw new Error('Zooming is not enabled!');
 			}
 
 			// Add callback if exists
@@ -540,7 +540,7 @@ var Scroller;
 			if (zoom != null && zoom !== self.__zoomLevel) {
 
 				if (!self.options.zooming) {
-					throw new Error("Zooming is not enabled!");
+					throw new Error('Zooming is not enabled!');
 				}
 
 				left *= zoom;
@@ -646,14 +646,14 @@ var Scroller;
 
 			// Array-like check is enough here
 			if (touches.length == null) {
-				throw new Error("Invalid touch list: " + touches);
+				throw new Error('Invalid touch list: ' + touches);
 			}
 
 			if (timeStamp instanceof Date) {
 				timeStamp = timeStamp.valueOf();
 			}
-			if (typeof timeStamp !== "number") {
-				throw new Error("Invalid timestamp value: " + timeStamp);
+			if (typeof timeStamp !== 'number') {
+				throw new Error('Invalid timestamp value: ' + timeStamp);
 			}
 
 			var self = this;
@@ -732,14 +732,14 @@ var Scroller;
 
 			// Array-like check is enough here
 			if (touches.length == null) {
-				throw new Error("Invalid touch list: " + touches);
+				throw new Error('Invalid touch list: ' + touches);
 			}
 
 			if (timeStamp instanceof Date) {
 				timeStamp = timeStamp.valueOf();
 			}
-			if (typeof timeStamp !== "number") {
-				throw new Error("Invalid timestamp value: " + timeStamp);
+			if (typeof timeStamp !== 'number') {
+				throw new Error('Invalid timestamp value: ' + timeStamp);
 			}
 
 			var self = this;
@@ -921,8 +921,8 @@ var Scroller;
 			if (timeStamp instanceof Date) {
 				timeStamp = timeStamp.valueOf();
 			}
-			if (typeof timeStamp !== "number") {
-				throw new Error("Invalid timestamp value: " + timeStamp);
+			if (typeof timeStamp !== 'number') {
+				throw new Error('Invalid timestamp value: ' + timeStamp);
 			}
 
 			var self = this;
@@ -1049,7 +1049,7 @@ var Scroller;
 
 			var self = this;
 
-			// Remember whether we had an animation, then we try to continue based on the current "drive" of the animation
+			// Remember whether we had an animation, then we try to continue based on the current 'drive' of the animation
 			var wasAnimating = self.__isAnimating;
 			if (wasAnimating) {
 				core.effect.Animate.stop(wasAnimating);
@@ -1307,8 +1307,8 @@ var Scroller;
 				var scrollOutsideY = 0;
 
 				// This configures the amount of change applied to deceleration/acceleration when reaching boundaries
-				var penetrationDeceleration = self.options.penetrationDeceleration; 
-				var penetrationAcceleration = self.options.penetrationAcceleration; 
+				var penetrationDeceleration = self.options.penetrationDeceleration;
+				var penetrationAcceleration = self.options.penetrationAcceleration;
 
 				// Check limits
 				if (scrollLeft < self.__minDecelerationScrollLeft) {
