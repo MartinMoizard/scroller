@@ -68,10 +68,10 @@ var Scroller;
 			scrollingComplete: NOOP,
 
 			/** This configures the amount of change applied to deceleration when reaching boundaries  **/
-            penetrationDeceleration : 0.03,
+      penetrationDeceleration : 0.03,
 
             /** This configures the amount of change applied to acceleration when reaching boundaries  **/
-            penetrationAcceleration : 0.08
+      penetrationAcceleration : 0.08
 
 		};
 
@@ -595,7 +595,7 @@ var Scroller;
 			}
 
 			// Publish new values
-			self.__publish(left, top, zoom, animate);
+			return self.__publish(left, top, zoom, animate);
 
 		},
 
@@ -1058,60 +1058,65 @@ var Scroller;
 			}
 
 			if (animate && self.options.animating) {
+				return new Promise(function(res, rej) {
+					// Keep scheduled positions for scrollBy/zoomBy functionality
+					self.__scheduledLeft = left;
+					self.__scheduledTop = top;
+					self.__scheduledZoom = zoom;
 
-				// Keep scheduled positions for scrollBy/zoomBy functionality
-				self.__scheduledLeft = left;
-				self.__scheduledTop = top;
-				self.__scheduledZoom = zoom;
+					var oldLeft = self.__scrollLeft;
+					var oldTop = self.__scrollTop;
+					var oldZoom = self.__zoomLevel;
 
-				var oldLeft = self.__scrollLeft;
-				var oldTop = self.__scrollTop;
-				var oldZoom = self.__zoomLevel;
+					var diffLeft = left - oldLeft;
+					var diffTop = top - oldTop;
+					var diffZoom = zoom - oldZoom;
 
-				var diffLeft = left - oldLeft;
-				var diffTop = top - oldTop;
-				var diffZoom = zoom - oldZoom;
+					var cbRetVals = [];
 
-				var step = function(percent, now, render) {
+					var step = function(percent, now, render) {
 
-					if (render) {
+						if (render) {
 
-						self.__scrollLeft = oldLeft + (diffLeft * percent);
-						self.__scrollTop = oldTop + (diffTop * percent);
-						self.__zoomLevel = oldZoom + (diffZoom * percent);
+							self.__scrollLeft = oldLeft + (diffLeft * percent);
+							self.__scrollTop = oldTop + (diffTop * percent);
+							self.__zoomLevel = oldZoom + (diffZoom * percent);
 
-						// Push values out
-						if (self.__callback) {
-							callbackReturnVal = self.__callback(self.__scrollLeft, self.__scrollTop, self.__zoomLevel);
+							// Push values out
+							if (self.__callback) {
+								var cbRes = self.__callback(self.__scrollLeft, self.__scrollTop, self.__zoomLevel);
+								if(!!cbRes) {
+									cbRetVals.push(cbRes);
+								}
+							}
+						}
+					};
+
+					var verify = function(id) {
+						return self.__isAnimating === id;
+					};
+
+					var completed = function(renderedFramesPerSecond, animationId, wasFinished) {
+						if (animationId === self.__isAnimating) {
+							self.__isAnimating = false;
+						}
+						if (self.__didDecelerationComplete || wasFinished) {
+							self.options.scrollingComplete();
 						}
 
-					}
-				};
-
-				var verify = function(id) {
-					return self.__isAnimating === id;
-				};
-
-				var completed = function(renderedFramesPerSecond, animationId, wasFinished) {
-					if (animationId === self.__isAnimating) {
-						self.__isAnimating = false;
-					}
-					if (self.__didDecelerationComplete || wasFinished) {
-						self.options.scrollingComplete();
-					}
-
-					if (self.options.zooming) {
-						self.__computeScrollMax();
-						if(self.__zoomComplete) {
-							self.__zoomComplete();
-							self.__zoomComplete = null;
+						if (self.options.zooming) {
+							self.__computeScrollMax();
+							if(self.__zoomComplete) {
+								self.__zoomComplete();
+								self.__zoomComplete = null;
+							}
 						}
-					}
-				};
+						res(cbRetVals);
+					};
 
-				// When continuing based on previous animation we choose an ease-out animation instead of ease-in-out
-				self.__isAnimating = core.effect.Animate.start(step, verify, completed, self.options.animationDuration, wasAnimating ? easeOutCubic : easeInOutCubic);
-
+					// When continuing based on previous animation we choose an ease-out animation instead of ease-in-out
+					self.__isAnimating = core.effect.Animate.start(step, verify, completed, self.options.animationDuration, wasAnimating ? easeOutCubic : easeInOutCubic);
+				});
 			} else {
 
 				self.__scheduledLeft = self.__scrollLeft = left;
@@ -1131,8 +1136,8 @@ var Scroller;
 						self.__zoomComplete = null;
 					}
 				}
+				return Promise.resolve(callbackReturnVal);
 			}
-			return callbackReturnVal;
 		},
 
 
