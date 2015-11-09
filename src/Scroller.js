@@ -1047,6 +1047,7 @@ var Scroller;
 		 */
 		__publish: function(left, top, zoom, animate) {
 
+			var callbackReturnVal = null;
 			var self = this;
 
 			// Remember whether we had an animation, then we try to continue based on the current 'drive' of the animation
@@ -1081,7 +1082,7 @@ var Scroller;
 
 						// Push values out
 						if (self.__callback) {
-							self.__callback(self.__scrollLeft, self.__scrollTop, self.__zoomLevel);
+							callbackReturnVal = self.__callback(self.__scrollLeft, self.__scrollTop, self.__zoomLevel);
 						}
 
 					}
@@ -1119,7 +1120,7 @@ var Scroller;
 
 				// Push values out
 				if (self.__callback) {
-					self.__callback(left, top, zoom);
+					callbackReturnVal = self.__callback(left, top, zoom);
 				}
 
 				// Fix max scroll ranges
@@ -1131,6 +1132,7 @@ var Scroller;
 					}
 				}
 			}
+			return callbackReturnVal;
 		},
 
 
