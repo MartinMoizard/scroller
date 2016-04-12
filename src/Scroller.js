@@ -305,7 +305,7 @@ var Scroller;
 			self.__computeScrollMax();
 
 			// Refresh scroll position
-			self.scrollTo(self.__scrollLeft, self.__scrollTop, true);
+			return self.scrollTo(self.__scrollLeft, self.__scrollTop, true);
 
 		},
 
